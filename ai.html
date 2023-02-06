@@ -1,0 +1,98 @@
+<html>
+  <head>
+    <title>My Chatbot Website</title>
+  </head>
+  <body>
+    <h1>My Chatbot</h1>
+    <div id="chatbot-container">
+      <ul id="chatbot-conversation">
+      </ul>
+      <form id="chatbot-form">
+        <input type="text" id="chatbot-input" placeholder="Ask your question here">
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </body>
+
+  <script>
+    const chatbotContainer = document.getElementById("chatbot-container");
+    const chatbotConversation = document.getElementById("chatbot-conversation");
+    const chatbotForm = document.getElementById("chatbot-form");
+    const chatbotInput = document.getElementById("chatbot-input");
+
+    chatbotForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const userInput = chatbotInput.value;
+      addMessage(userInput, "user");
+      chatbotInput.value = "";
+
+      // Make API request to generate response
+      fetch("https://api.chatbot.com/v2/stories", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer mz7PZcmtxGW8h_KuodTSouLBkfgb_A5Q`
+  },
+        body: JSON.stringify({
+          query: userInput
+        })
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          addMessage(data.response, "chatbot");
+        })
+        .catch((error) => {
+          addMessage("Sorry, there was an error.", "chatbot");
+        });
+    });
+
+    function addMessage(text, sender) {
+      const messageElement = document.createElement("li");
+      messageElement.classList.add(sender);
+      messageElement.innerText = text;
+      chatbotConversation.appendChild(messageElement);
+      chatbotContainer.scrollTop = chatbotContainer.scrollHeight;
+    }
+  </script>
+
+  <style>
+    #chatbot-container {
+      height: 300px;
+      overflow: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+
+    #chatbot-conversation {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #chatbot-conversation li {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    #chatbot-conversation .user {
+      background-color: lightblue;
+      float: right;
+      clear: both;
+    }
+
+    #chatbot-conversation .chatbot {
+      background-color: lightgray;
+      float: left;
+      clear: both;
+    }
+
+    #chatbot-form {
+      margin-top: 10px;
+      display: flex;
+    }
+
+    #chatbot-input {
+      flex-grow: 1;
+      padding: 10px;
+      border: 1
