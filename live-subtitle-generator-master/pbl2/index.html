@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PBL PROJECT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 80%;
+            margin-bottom: 20px;
+        }
+
+        #inputContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        textarea {
+            height: 300px; /* Adjust the height of the textarea */
+            width: 300px;
+            margin-left: 20px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+            font-size: 16px;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            width: 323px;
+            margin-bottom: 20px;
+            margin-left: 20px;
+            margin-top: 2px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            appearance: none;
+            background-color: white;
+            background-image: url("data:image/svg+xml,%3csvg fill='%23333' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px;
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        select:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        
+
+        video {
+            width: 40%;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #audioIndicator {
+            width: 20px;
+            height: 20px;
+            background-color: #ccc;
+            border-radius: 50%;
+            margin-left: 10px;
+            animation: pulse 1s infinite alternate; /* Add pulse animation */
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.2);
+            }
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+       
+
+    </style>
+</head>
+<body>
+    <h1>PBL PROJECT</h1>
+    <div id="container">
+        <video id="camera" autoplay playsinline></video>
+        <div id="inputContainer">
+            <textarea name="" id="output" cols="30" rows="4"></textarea>
+            <select id="languageDropdown">
+                <option value="en-US">English</option>
+                <option value="en-US">Hindi</option>
+                <option value="es">Spanish</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="zh">开始听 (中文)</option>
+                <!-- Add more options for other languages if needed -->
+            </select>
+        </div>
+        <div id="audioIndicator"></div> <!-- Audio indicator -->
+    </div>
+    <button id="toggleButton">Start</button>
+    
+
+    <script>
+        const recognition = new webkitSpeechRecognition();
+        let isListening = false;
+        const toggleButton = document.getElementById("toggleButton");
+        const output = document.getElementById("output");
+        const cameraView = document.getElementById("camera");
+        const audioIndicator = document.getElementById("audioIndicator");
+        const languageDropdown = document.getElementById("languageDropdown");
+
+        recognition.interimResult = true;
+        recognition.continuous = true;
+
+        toggleButton.onclick = () => {
+            if (isListening) {
+                recognition.stop();
+                toggleButton.textContent = 'Start';
+                toggleButton.style.backgroundColor = '#4CAF50';
+                audioIndicator.style.backgroundColor = '#ccc'; // Reset audio indicator color
+                languageDropdown.disabled= false;
+            } else {
+                recognition.lang = languageDropdown.value; // Change recognition language
+                recognition.start();
+                toggleButton.textContent = 'Stop';
+                toggleButton.style.backgroundColor ='Red';
+                languageDropdown.disabled= true;
+            }
+            isListening = !isListening;
+        };
+
+        recognition.onresult = event => {
+            output.value = event.results[event.results.length - 1][0].transcript;
+        };
+
+        recognition.onaudiostart = () => {
+            audioIndicator.style.backgroundColor = 'green'; // Change audio indicator color to green when audio starts
+        };
+
+        recognition.onaudioend = () => {
+            audioIndicator.style.backgroundColor = '#ccc'; // Reset audio indicator color when audio ends
+        };
+
+        navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+            .then(stream => {
+                cameraView.srcObject = stream;
+            })
+            .catch(err => {
+                console.error('Error accessing microphone and camera', err);
+            });
+    </script>
+</body>
+</html>
