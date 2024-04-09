@@ -174,13 +174,14 @@
             audioIndicator.style.backgroundColor = '#ccc'; // Reset audio indicator color when audio ends
         };
 
-        navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-            .then(stream => {
-                cameraView.srcObject = stream;
-            })
-            .catch(err => {
-                console.error('Error accessing microphone and camera', err);
-            });
+        navigator.mediaDevices.getUserMedia({ audio: false, video: true })
+    .then(stream => {
+        cameraView.srcObject = stream;
+    })
+    .catch(err => {
+        console.error('Error accessing microphone and camera', err);
+    });
+
     </script>
 </body>
 </html>
