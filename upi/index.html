@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entry Form</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  .form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: dodgerblue;
+  }
+  .btn-submit {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: dodgerblue;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .btn-submit:hover {
+    background-color: #007bff;
+  }
+  .error {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  .hidden {
+    display: none;
+  }
+
+  /* Style the dropdown arrow */
+/* Style the dropdown */
+select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+  cursor: pointer;
+}
+
+/* Style the dropdown when focused */
+select:focus {
+  outline: none;
+  border-color: dodgerblue;
+}
+
+</style>
+</head>
+<body>
+<div id="pages">
+    <form id="entryForm" action="https://script.google.com/macros/s/AKfycbyPWFQgtvP8-vY08Q_2ZES26mKRvvXD3HH3EbyG-94THuUwdBLZaov4w_wySunnuEBtZQ/exec" method="POST">
+<div id="page1" class="form-container">
+  
+    <div class="form-group">
+      <label for="entryName">Entry Name:</label>
+      <input type="text" id="entryName" name="entryName" required>
+      <div id="entryNameError" class="error"></div>
+    </div>
+    <div class="form-group">
+      <label for="systemID">System ID:</label>
+      <input type="text" id="systemID" name="systemID" required>
+      <div id="systemIDError" class="error"></div>
+    </div>
+    <div class="form-group">
+      <label for="courseName">Course Name:</label>
+      <select id="courseName" name="courseName" required>
+        <option value="B.tech">B.tech</option>
+      </select>
+      <div id="courseNameError" class="error"></div>
+    </div>
+    <button type="button" class="btn-submit" onclick="showPage2()">Next</button>
+  
+</div>
+
+<div id="page2" class="form-container hidden">
+  
+    
+    <div class="form-group">
+      <button type="button" class="btn-submit" onclick="showPage1()">Back</button>
+    </div>
+    <div class="form-group">
+      <button type="button" class="btn-submit" onclick="makePayment()">Make Payment of Rs.100</button>
+    </div>
+    <!-- <div class="form-group">
+        <input type="checkbox" id="acceptCheckbox" onchange="toggleSubmit()">
+        <label for="acceptCheckbox">Accepted</label>
+    </div> -->
+    <div class="form-group">
+        <button type="submit" class="btn-submit" id="submitButton">Submit</button>
+    </div>
+    
+  
+</div>
+</form>
+</div>
+<script>
+  function showPage2() {
+    var entryName = document.getElementById("entryName").value.trim();
+    var systemID = document.getElementById("systemID").value.trim();
+    var courseName = document.getElementById("courseName").value.trim();
+    if (entryName!=""&&systemID!=""&&courseName!=""){
+    document.getElementById("page1").classList.add("hidden");
+    document.getElementById("page2").classList.remove("hidden");
+    }
+  }
+
+  function showPage1() {
+    document.getElementById("page2").classList.add("hidden");
+    document.getElementById("page1").classList.remove("hidden");
+  }
+
+  function validatePage1() {
+    var entryName = document.getElementById("entryName").value.trim();
+    var systemID = document.getElementById("systemID").value.trim();
+    var courseName = document.getElementById("courseName").value.trim();
+    var isValid = true;
+
+    if (entryName === "") {
+      document.getElementById("entryNameError").innerText = "Entry Name is required";
+      isValid = false;
+    } else {
+      document.getElementById("entryNameError").innerText = "";
+    }
+
+    if (systemID === "") {
+      document.getElementById("systemIDError").innerText = "System ID is required";
+      isValid = false;
+    } else {
+      document.getElementById("systemIDError").innerText = "";
+    }
+
+    if (courseName === "") {
+      document.getElementById("courseNameError").innerText = "Course Name is required";
+      isValid = false;
+    } else {
+      document.getElementById("courseNameError").innerText = "";
+    }
+
+    return isValid;
+  }
+
+  function validatePage2() {
+    return true; // No validation needed as there's no input field
+  }
+
+//   function toggleSubmit() {
+//     var checkbox = document.getElementById("acceptCheckbox");
+//     var submitButton = document.getElementById("submitButton");
+//     submitButton.disabled = !checkbox.checked;
+//   }
+
+  function makePayment() {
+    var systemID = document.getElementById("systemID").value.trim();
+    var paymentLink = "upi://pay?pa=maurya.avinash@paytm&pn=Avinash%20Maurya&am=1&tn=" + systemID + "&cu=INR";
+    window.open(paymentLink, '_blank');
+  }
+  function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var newRow = [];
+  newRow.push(new Date()); // Add timestamp
+  newRow.push(e.parameter.entryName);
+  newRow.push(e.parameter.systemID);
+  newRow.push(e.parameter.courseName);
+  sheet.appendRow(newRow);
+  return ContentService.createTextOutput("Success").setMimeType(ContentService.MimeType.TEXT);
+}
+
+</script>
+
+</body>
+</html>
